@@ -1,5 +1,4 @@
 package src.Client;
-
 import java.io.*;
 import java.net.*;
 public class Client
@@ -10,9 +9,7 @@ public class Client
     public void server_connect(int port, String ip) throws IOException
     {
         client_socket=new Socket(ip,port);
-        System.out.println("Server connected...");
-        
-        
+        System.out.println("Server connected...");  
     }
     public void send_msg() throws IOException
     {
@@ -41,7 +38,8 @@ public class Client
         Client obj_main=new Client();
         try
         {
-        obj_main.server_connect(5000,"localhost");}
+        obj_main.server_connect(5000,"localhost");
+        }
         catch (Exception e)
         {
             System.out.println("some error occurred");
@@ -57,22 +55,14 @@ public class Client
         //     return;
         // }
         try 
-        {
-            
-            obj_main.recieve_message();
+        {   
+            obj_main.send_msg();
         } 
         catch (Exception e)
         {
             System.out.println("error occurred");
         }
-        try
-        {
-        obj_main.close_resource();
-        }
-        catch(Exception e)
-        {
-            System.out.println("error!!");
-        }
+        
     }
 
 }
