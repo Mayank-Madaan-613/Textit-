@@ -52,15 +52,18 @@ class Clienthandler implements Runnable{
         try{
         BufferedReader br=new BufferedReader(new InputStreamReader(this.soc.getInputStream()));
         String a="";
+        BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(this.soc.getOutputStream()));
         while(a!=null)
         {
         a=br.readLine();
-        System.out.println(a);
+        bw.write(a);
+        bw.newLine();
+        bw.flush();
         }
         }
         catch(Exception e)
         {
-            System.out.println("ohh some error occured...");
+            System.out.println("Client disconnected...");
         }
     }
 }
