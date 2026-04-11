@@ -9,7 +9,7 @@ public class Client
     // private BufferedWriter bw;
     public void server_connect(int port, String ip) throws IOException
     {
-        client_socket=new Socket(ip,port);
+        client_socket=new Socket(ip,port);// used for connecting to server
         System.out.println("Server connected..."); 
         Thread sender=new Thread( new Message_sender(client_socket));
         sender.start();
