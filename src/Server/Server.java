@@ -2,6 +2,7 @@ package src.Server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 public class Server
 {   
     private ServerSocket ss;
@@ -43,7 +44,7 @@ public class Server
 }
 class Clienthandler implements Runnable{
     private BufferedWriter bw;
-    public static Map<Socket,BufferedWriter> client_map=new HashMap<>();
+    public static Map<Socket,BufferedWriter> client_map=new ConcurrentHashMap<>();//this helps multiple threads to change the hashmap without ConcurrentModificationException 
     private Socket soc;
     Clienthandler(Socket sc)
     {
@@ -54,7 +55,7 @@ class Clienthandler implements Runnable{
         client_map.put(sc,bw);
         }
         catch(Exception e){
-            System.out.println("cannot create client maps");
+            System.out.println("cannot create client map");
         }
     }
     public void run()
@@ -81,9 +82,17 @@ class Clienthandler implements Runnable{
             BufferedWriter value=client_mapEntry.getValue();
             Socket key=client_mapEntry.getKey();
             if(key!=soc){
+                try{
             value.write(message);
             value.newLine();
-            value.flush();}
+            value.flush();
+            }
+            catch(Exception e){
+                System.out.println("Error:client disconnected while broadcasting");
+                client_map.remove(key);
+            }
+        }
+        
         }
     }
 }
