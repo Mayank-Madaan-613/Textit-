@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hybrid Chat UI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-blue-600 p-4 text-white font-bold">Socket Server Web UI</div>
+        <div id="messages" class="h-64 overflow-y-auto p-4 space-y-2 text-sm border-b"></div>
+        <div class="p-4 flex gap-2">
+            <input id="msg" type="text" class="flex-1 border p-2 rounded" placeholder="Type to original server...">
+            <button onclick="send()" class="bg-blue-600 text-white px-4 py-2 rounded">Send</button>
+        </div>
+    </div>
+
+    <script>
+        var stompClient = null;
+
+        function connect() {
+            var socket = new SockJS('/ws-bridge');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/messages', function (msg) {
+                    var div = document.createElement('div');
+                    div.className = "bg-gray-200 p-2 rounded";
+                    div.innerText = msg.body;
+                    document.getElementById('messages').appendChild(div);
+                });
+            });
+        }
+
+        function send() {
+            var val = document.getElementById('msg').value;
+            // Sends to the @MessageMapping in our Bridge
+            stompClient.send("/app/chat.send", {}, val);
+            document.getElementById('msg').value = '';
+        }
+
+        connect();
+    </script>
+</body>
+</html>
