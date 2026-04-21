@@ -44,7 +44,7 @@ class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 }
 
-// 2. The Bridge Controller: It acts as a "Client" to your Raw Server
+// 2. The Bridge Controller: It acts as a Client to Raw Server
 @Controller
 class ChatBridgeController {
 
@@ -81,7 +81,7 @@ class ChatBridgeController {
                     messagingTemplate.convertAndSend("/topic/messages", line);
                 }
             } catch (IOException e) {
-                System.err.println("❌ [Bridge] Raw Server not found. Retrying in 5s... (" + (++retryCount) + ")");
+                System.err.println("[Bridge] Raw Server not found. Retrying in 5s... (" + (++retryCount) + ")");
                 try { Thread.sleep(5000); } catch (InterruptedException ignored) {}
             }
         }

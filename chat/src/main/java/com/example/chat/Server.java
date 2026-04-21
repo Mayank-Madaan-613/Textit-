@@ -25,22 +25,6 @@ public class Server
                 obj.start();
             }
         }
-        // public void broadcast_msg() throws IOException
-        // {
-            //     while(true){
-                //     br=new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
-    //     String s;
-    //     s=br.readLine();
-    //     System.out.println(s);
-    //     // OutputStream os = client_socket.getOutputStream();
-    //     // PrintWriter out = new PrintWriter(new OutputStreamWriter(os), true); // 'true' enables auto-flush
-    //     // out.println(s);
-    //     // bw=new BufferedWriter(new OutputStreamWriter(client_socket.getOutputStream()));
-    //     // bw.write(s);
-    //     // bw.newLine();        
-    //     // bw.flush();
-    //     }
-    
     public static void main(String[]args)
     {  
         Server s=new Server();
