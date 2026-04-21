@@ -4,15 +4,99 @@
     <title>TextIt</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* General Page Styling */
+        body {
+            background-image:url(b.jpg); 
+            background-size:cover;
+            background-position:fixed;
+            padding: 3rem;
+            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+            margin: 0;
+        }
+
+        /* Container Card */
+        .chat-container {
+            position:center;
+            max-height:100vh; 
+            backdrop-filter:blur(8px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 3rem;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .chat-header {
+            background-color: #2563eb; /* Equivalent to bg-blue-600 */
+            padding: 1rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Message Display Area */
+        #messages {
+            height: 16rem; /* Equivalent to h-64 */
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* Equivalent to space-y-2 */
+            font-size: 0.875rem;
+        }
+
+        /* Individual Message Bubble */
+        .message-bubble {
+            background-color: #e5e7eb; /* Equivalent to bg-gray-200 */
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Input Footer Area */
+        .chat-footer {
+            padding: 2rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            border-top:0px;
+            border-left: 0px;
+            border-right:0px;
+            border-bottom: solid 2px black ;
+            padding: 0.5rem;
+            outline: none;
+            background-color:rgba(0, 0, 0, 0)
+        }
+
+        .chat-input:focus {
+            border-color: #2563eb;
+        }
+
+        /* Button Styling */
+        .send-button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <div class="bg-blue-600 p-4 text-white font-bold">Socket Server Web UI</div>
-        <div id="messages" class="h-64 overflow-y-auto p-4 space-y-2 text-sm border-b"></div>
-        <div class="p-4 flex gap-2">
-            <input id="msg" type="text" class="flex-1 border p-2 rounded" placeholder="Type to original server...">
-            <button onclick="send()" class="bg-blue-600 text-white px-4 py-2 rounded">Send</button>
+<body>
+    <div class="chat-container">
+        
+        <div id="messages"></div>
+        
+        <div class="chat-footer">
+            <input id="msg" type="text" class="chat-input" placeholder="Enter you message.....">
+            <button onclick="send()" class="send-button">Send</button>
         </div>
     </div>
 
@@ -25,18 +109,24 @@
             stompClient.connect({}, function (frame) {
                 stompClient.subscribe('/topic/messages', function (msg) {
                     var div = document.createElement('div');
-                    div.className = "bg-gray-200 p-2 rounded";
+                    // Updated class name to match new CSS
+                    div.className = "message-bubble";
                     div.innerText = msg.body;
                     document.getElementById('messages').appendChild(div);
+                    
+                    // Auto-scroll to bottom
+                    var msgDiv = document.getElementById('messages');
+                    msgDiv.scrollTop = msgDiv.scrollHeight;
                 });
             });
         }
 
         function send() {
             var val = document.getElementById('msg').value;
-            // Sends to the @MessageMapping in our Bridge
-            stompClient.send("/app/chat.send", {}, val);
-            document.getElementById('msg').value = '';
+            if (val.trim() !== "") {
+                stompClient.send("/app/chat.send", {}, val);
+                document.getElementById('msg').value = '';
+            }
         }
 
         connect();
