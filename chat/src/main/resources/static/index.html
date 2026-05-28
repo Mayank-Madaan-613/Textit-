@@ -47,13 +47,15 @@
             padding: 0.5rem;
             border-radius: 0.25rem;
         }
+       .message-bubble-self{
+            background-color:pink;
+            padding:0.5rem;
+            border-radius:0.25rem;
+        }
 
         
         .chat-footer {
             padding: 0.1rem 2rem 2rem 2rem;    
-            /* display: flex;
-            flex-direction: row;
-            gap: 0.5rem; */
         }
         .input-box{
             display:flex;
@@ -131,7 +133,6 @@
     <div class="chat-container" id="drop-area">
         
         <div id="messages"></div>
-        
         <div class="chat-footer" id="chat-footer">
             <div class="input-box">
                 <input id="msg" type="text" class="chat-input" placeholder="Enter you message.....">
@@ -179,11 +180,18 @@
             });
         }
 
-        function send() {
+        function send(){
             var val = document.getElementById('msg').value;
-            if (val.trim() !== "") {
-                stompClient.send("/app/chat.send", {}, val);
-                document.getElementById('msg').value = '';
+            if(val.trim()!==""){
+            var div=document.createElement('div');
+            div.innerText=val;
+            div.className="message-bubble-self";
+            div.id="self-message";
+            document.getElementById("messages").appendChild(div);
+            var msgDiv = document.getElementById('messages');
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+            stompClient.send("/app/chat.send", {}, val);
+            document.getElementById('msg').value = '';
             }
         }
         connect();

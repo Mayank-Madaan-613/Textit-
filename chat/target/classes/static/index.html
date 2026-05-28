@@ -15,12 +15,10 @@
             margin: 0;
         }
 
-        
         .chat-container {
             position:center;
             max-height:100vh; 
             backdrop-filter:blur(8px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             border-radius: 3rem;
             overflow: hidden;
         }
@@ -49,23 +47,32 @@
             padding: 0.5rem;
             border-radius: 0.25rem;
         }
+       .message-bubble-self{
+            background-color:pink;
+            padding:0.5rem;
+            border-radius:0.25rem;
+        }
 
         
         .chat-footer {
-            padding: 0.1rem 2rem;
-            padding-bottom:2rem;
-            display: flex;
-            flex-direction: row;
-            gap: 0.5rem;
+            padding: 0.1rem 2rem 2rem 2rem;    
+        }
+        .input-box{
+            display:flex;
+            padding:0.2rem 0.5rem;
+            flex-direction:row;
+            align-items:center;
+            gap:0.5rem;
+            border:none;
+            border-radius:10rem;
+            background-color:white;
+            box-shadow: 0px 0px 15px 6px rgba(0,0,0,0.3);
         }
 
         .chat-input {
             flex: 1;
-            border-top:0px;
-            border-left: 0px;
-            border-right:0px;
-            border-bottom: solid 2px black ;
-            padding: 0.5rem;
+            border:none;
+            padding:1rem;
             outline: none;
             background-color:rgba(0, 0, 0, 0);
             transition:border-color 0.2s;
@@ -75,40 +82,85 @@
             border-color:#81bbd4;
         }
 
-        
+
         .send-button {
+            display:flex;
+            align-items: center;
+            justify-content:center;
             background-color:rgb(165, 229, 245);
-            color: black;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
+            border-radius: 10rem;
+            width:4vw;
+            height:6vh;
             border: none;
             cursor: pointer;
             transition-property: background-color;
             transition-duration:0.2s;
         }
 
+        .attach{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background-color:rgb(165, 229, 245);
+            border:none;
+            border-radius:100rem;
+            width:3vw;
+            height:6vh;
+            cursor:pointer;
+            transition-property:backgorund-color;
+            transition-duration:0.2s;
+        }
+
+
+        #send-image{
+            width:30px;
+            height:35px;
+        }
+        #attach-image{
+            width:25px;
+            height:27px;
+        }
+
         .send-button:hover {
-            background-color:#81bbd4;
+            background-color:rgb(129,187,212);
+        }
+        .attach:hover{
+            background-color:rgb(129,187,212);
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
+    <div class="chat-container" id="drop-area">
         
         <div id="messages"></div>
-        
-        <div class="chat-footer">
-            <input id="msg" type="text" class="chat-input" placeholder="Enter you message.....">
-            <button onclick="send()" class="send-button">Send</button>
+        <div class="chat-footer" id="chat-footer">
+            <div class="input-box">
+                <input id="msg" type="text" class="chat-input" placeholder="Enter you message.....">
+                <button class="attach" id="attach-btn"><img src="attach.png" id="attach-image"></button>
+                <input type="file" id="fileinput" hidden>
+                <button onclick="send()" class="send-button"><img src="send.png" id="send-image"></button>
+            </div>
         </div>
     </div>
 
     <script>
+        const attachbtn=document.getElementById("attach-btn");
+        attachbtn.addEventListener("click", function(){
+            fileinput.click();
+        });
+        var file=document.getElementById("fileinput")
+        file.addEventListener("change",function(){
+            var div =document.createElement('div');
+            const selectedFile = fileinput.files[0];
+            div.innerText=selectedFile.name;
+            document.getElementById("chat-footer").appendChild(div);
+        })
         const inp=document.getElementById("msg");
         inp.addEventListener("keydown",(event)=>{
             if(event.key==="Enter"){
                 event.preventDefault();
                 send();
+                
             }
         })
         var stompClient = null;
@@ -128,14 +180,20 @@
             });
         }
 
-        function send() {
+        function send(){
             var val = document.getElementById('msg').value;
-            if (val.trim() !== "") {
-                stompClient.send("/app/chat.send", {}, val);
-                document.getElementById('msg').value = '';
+            if(val.trim()!==""){
+            var div=document.createElement('div');
+            div.innerText=val;
+            div.className="message-bubble-self";
+            div.id="self-message";
+            document.getElementById("messages").appendChild(div);
+            var msgDiv = document.getElementById('messages');
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+            stompClient.send("/app/chat.send", {}, val);
+            document.getElementById('msg').value = '';
             }
         }
-
         connect();
     </script>
 </body>

@@ -72,7 +72,7 @@ class ChatBridgeController {
                 serverWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                System.out.println("✅ [Bridge] Connected to your Raw Java Server on port 5000");
+                System.out.println("[Bridge] Connected to your Raw Java Server on port 5000");
 
                 String line;
                 // Equivalent to your Message_reciever.java run() logic

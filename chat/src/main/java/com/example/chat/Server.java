@@ -71,10 +71,12 @@ class Clienthandler implements Runnable{
         for(Map.Entry<Socket,BufferedWriter> client_mapEntry: client_map.entrySet()){
             BufferedWriter value=client_mapEntry.getValue();
             Socket key=client_mapEntry.getKey();
-                try{
-            value.write(message);
-            value.newLine();
-            value.flush();
+            try{
+                if(key!=this.soc){
+                    value.write(message);
+                    value.newLine();
+                    value.flush();
+                }
             }
             catch(Exception e){
                 System.out.println("Error:client disconnected while broadcasting");
